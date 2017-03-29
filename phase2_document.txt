@@ -1,0 +1,564 @@
+Todd Sutter
+Phase 2 - SQL Queries
+Due March 28, 2017
+
+I, Todd Sutter, am the only member of my group. I created all of the tables in my car advertising business alone.
+
+--- CREATE TABLES AND INSERT DATA ---
+
+CREATE TABLE IF NOT EXISTS users(
+    email varchar(64) PRIMARY KEY NOT NUll,
+    firstname varchar(8) NOT NULL,
+    lastname varchar(8) NOT NULL
+);
+CREATE TABLE IF NOT EXISTS driver(
+    email varchar(64) PRIMARY KEY NOT NULL REFERENCES users(email)
+);
+CREATE TABLE IF NOT EXISTS advertiser(
+    email varchar(64) PRIMARY KEY NOT NULL REFERENCES users(email),
+    companyname varchar(64) NOT NULL
+);
+CREATE TABLE IF NOT EXISTS vehicle(
+    vin varchar(20) PRIMARY KEY NOT NULL,
+    make varchar(20) NOT NULL,
+    model varchar(20) NOT NULL,
+    year_made int NOT NULL,
+    driver_email varchar(64) NOT NULL REFERENCES driver(email)
+);
+CREATE TABLE IF NOT EXISTS campaign(
+    campaign_name varchar(20) PRIMARY KEY NOT NULL,
+    start_date date NOT NULL,
+    end_date date NOT NULL,
+    driver_email varchar(64) NOT NULL REFERENCES driver(email)
+);
+CREATE TABLE IF NOT EXISTS campaignadvertiser(
+    campaign_name varchar(20) NOT NULL REFERENCES campaign(campaign_name),
+    advertiser_email varchar(64) NOT NULL REFERENCES advertiser(email)
+);
+CREATE TABLE IF NOT EXISTS route(
+    route_number int PRIMARY KEY NOT NULL,
+    mileage float NOT NULL,
+    campaign_name varchar(20) NOT NULL REFERENCES campaign(campaign_name)
+);
+CREATE TABLE IF NOT EXISTS pin(
+    pin_number int PRIMARY KEY NOT NULL,
+    latitude float NOT NULL,
+    longitude float NOT NULL,
+    route_number int NOT NULL REFERENCES route(route_number)
+);
+INSERT INTO users (email, firstname, lastname) VALUES
+('todd@gmail.com', 'Todd', 'Sutter'),
+('tyler@gmail.com', 'Tyler', 'Veseth'),
+('jordan@gmail.com', 'Jordan', 'Olson'),
+('sarah@gmail.com', 'Sarah', 'Wilkenin'),
+('jourdy@gmail.com', 'Jourdy', 'Persinge'),
+('shannon@gmail.com', 'Shannon', 'Persinge'),
+('molly@gmail.com', 'Molly', 'Sutter'),
+('dexter@gmail.com', 'Dexter', 'Renter'),
+('matt@gmail.com', 'Matt', 'Ramold'),
+('wiley@gmail.com', 'Wiley', 'Nichols'),
+('david@gmail.com', 'David', 'Sutter'),
+('amber@gmail.com', 'Amber', 'Sutter');
+INSERT INTO driver (email) VALUES
+('todd@gmail.com'),
+('tyler@gmail.com'),
+('jordan@gmail.com'),
+('sarah@gmail.com'),
+('jourdy@gmail.com');
+INSERT INTO advertiser (companyname, email) VALUES
+('Google', 'shannon@gmail.com'),
+('Apple', 'molly@gmail.com'),
+('Stay Sharp', 'dexter@gmail.com'),
+('Mens Warehouse', 'matt@gmail.com'),
+('Qdoba', 'wiley@gmail.com'),
+('ScoreVision', 'david@gmail.com'),
+('IGroupCreative', 'amber@gmail.com');
+INSERT INTO vehicle (driver_email, make, model, vin, year_made) VALUES
+('todd@gmail.com','Lamborghini','Gallardo','abc1',2006),
+('tyler@gmail.com','Chevy','Corvette','def2',2008),
+('jordan@gmail.com','Ford','Fiesta','ghi3',1985),
+('sarah@gmail.com','Lexus','Rx350','jkl4',2010),
+('jourdy@gmail.com','McLaren','720s','mno5',2017);
+INSERT INTO campaign (campaign_name, driver_email, end_date, start_date) VALUES
+('Google and Apple', 'todd@gmail.com', '20171231', '20170101'),
+('Stay Sharp 1', 'tyler@gmail.com', '20171231', '20170101'),
+('ScoreVision/IGroup', 'jordan@gmail.com', '20171231', '20170101'),
+('Qdoba 2016', 'todd@gmail.com', '20161231', '20160101'),
+('Qdoba 2018', 'todd@gmail.com', '20181231', '20180101'),
+('Qdoba 2019', 'todd@gmail.com', '20191231', '20190101'),
+('Mens Warehouse Jan', 'jourdy@gmail.com', '20170131', '20170101');
+INSERT INTO campaignadvertiser (advertiser_email, campaign_name) VALUES
+('shannon@gmail.com','Google and Apple'),
+('molly@gmail.com','Google and Apple'),
+('dexter@gmail.com','Stay Sharp 1'),
+('david@gmail.com','ScoreVision/IGroup'),
+('amber@gmail.com','ScoreVision/IGroup'),
+('wiley@gmail.com','Qdoba 2016'),
+('wiley@gmail.com','Qdoba 2018'),
+('wiley@gmail.com','Qdoba 2019'),
+('matt@gmail.com','Mens Warehouse Jan');
+INSERT INTO route (route_number, campaign_name, mileage) VALUES
+(1, 'Qdoba 2016', 15.7),
+(2, 'Qdoba 2016', 42.3),
+(3, 'Qdoba 2016', 2.2),
+(4, 'Qdoba 2016', 92.1),
+(5, 'Google and Apple', 30.5),
+(6, 'Google and Apple', 45.1),
+(7, 'Stay Sharp 1', 12.9),
+(8, 'ScoreVision/IGroup', 5.5),
+(9, 'ScoreVision/IGroup', 74.4),
+(10, 'ScoreVision/IGroup', 27.7),
+(11, 'Mens Warehouse Jan', 30.5),
+(12, 'Mens Warehouse Jan', 50.8),
+(13, 'Google and Apple', 0.0);
+INSERT INTO pin (route_number, latitude, longitude, pin_number) VALUES
+(1,91.1,45.5,1),
+(1,91.2,45.5,2),
+(1,91.3,45.5,3),
+(1,91.4,45.5,4),
+(2,91.1,45.5,5),
+(2,91.2,45.5,6),
+(2,91.3,45.5,7),
+(2,91.4,45.5,8),
+(3,91.1,45.5,9),
+(3,91.2,45.5,10),
+(3,91.3,45.5,11),
+(3,91.4,45.5,12),
+(4,91.1,45.5,13),
+(4,91.2,45.5,15),
+(4,91.3,45.5,16),
+(4,91.4,45.5,17),
+(5,91.1,45.5,18),
+(5,91.1,45.5,19),
+(6,91.1,45.5,20),
+(6,91.1,45.5,21),
+(7,92.2,46.6,22),
+(7,92.3,46.7,23),
+(7,92.2,46.8,24),
+(8,91.5,45.5,25),
+(8,91.7,45.7,26),
+(9,91.5,45.5,27),
+(9,91.7,45.7,28),
+(10,91.5,45.5,29),
+(10,91.7,45.7,30),
+(11,91.1,45.1,31),
+(11,91.0,45.2,32),
+(11,90.9,45.3,33),
+(11,90.8,45.4,34),
+(12,91.1,45.1,35),
+(12,91.0,45.2,36),
+(12,90.9,45.3,37),
+(12,90.8,45.4,38);
+
+--- START QUERIES ---
+
+1) Get first and last names of all drivers.
+
+QUERY:
+
+SELECT DISTINCT firstname, lastname
+from driver JOIN users ON driver.email = users.email
+
+OUTPUT:
+
+firstname	lastname	
+Jordan		Olson	
+Jourdy		Persinge	
+Sarah		Wilkenin	
+Todd		Sutter	
+Tyler		Veseth	
+
+2) Get emails of all advertisers.
+
+QUERY:
+
+SELECT email
+from advertiser
+
+OUTPUT:
+
+email	
+amber@gmail.com	
+david@gmail.com	
+dexter@gmail.com	
+matt@gmail.com	
+molly@gmail.com	
+shannon@gmail.com	
+wiley@gmail.com	
+
+3) Faulty insert to show primary key constraint.
+
+QUERY:
+
+INSERT INTO users (email, firstname, lastname) VALUES
+('jordan@gmail.com', 'Jordan', 'Smith');
+
+OUTPUT:
+
+#1062 - Duplicate entry 'jordan@gmail.com' for key 'PRIMARY'
+
+4) Faulty insert to show not null check constraint.
+
+QUERY:
+
+INSERT INTO users (email, firstname, lastname) VALUES
+('bob@gmail.com', 'Bob', NULL);
+
+OUTPUT:
+
+#1048 - Column 'lastname' cannot be null
+
+5) Faulty insert to show foreign key constraint.
+
+QUERY:
+
+INSERT INTO vehicle (driver_email, make, model, vin, year_made) VALUES
+('jake@gmail.com', 'Ferrari', 'F430', '1234', 2003);
+
+OUTPUT:
+
+The query succeeded. I expected it to fail, since 'jake@gmail.com' does not exist in the driver table.
+
+6) Get the amount of pins for each route.
+
+QUERY:
+
+SELECT route_number, COUNT(*)
+from pin
+GROUP BY route_number
+
+OUTPUT:
+
+route_number	COUNT(*)	
+1		4	
+2		4	
+3		4	
+4		4	
+5		2	
+6		2	
+7		3	
+8		2	
+9		2	
+10		2	
+11		4	
+12		4	
+
+7) Get the campaigns that have more than 1 route associated to it in increasing order.
+
+QUERY:
+
+SELECT route_count.campaign_name as campaign, route_count.routes as routes
+from ((SELECT campaign_name, COUNT(*) AS routes
+from route
+GROUP BY campaign_name) as route_count)
+where routes > 1
+ORDER BY routes
+
+OUTPUT:
+
+campaign		routes	
+Mens Warehouse Jan	2	
+Google and Apple	3	
+ScoreVision/IGroup	3	
+Qdoba 2016		4
+
+8) Select all vehicles with vin numbers that are 4 charaters long.
+
+QUERY:
+
+SELECT *
+from vehicle
+where LENGTH(vehicle.vin) = 4
+
+OUTPUT:
+
+vin	make		model		year_made	driver_email	
+1234	Ferrari		F430		2003		jake@gmail.com	
+abc1	Lamborghini	Gallardo	2006		todd@gmail.com	
+def2	Chevy		Corvette	2008		tyler@gmail.com	
+ghi3	Ford		Fiesta		1985		jordan@gmail.com	
+jkl4	Lexus		Rx350		2010		sarah@gmail.com	
+mno5	McLaren		720s		2017		jourdy@gmail.com	
+
+9) Select campaign names with less than 3 routes, but more than 0.
+
+QUERY:
+
+SELECT route.campaign_name, count(*) as route_count
+from route
+group by route.campaign_name
+having route_count < 3
+
+OUTPUT:
+
+campaign_name		route_count	
+Mens Warehouse Jan	2	
+Stay Sharp 1		1	
+
+10) Select all drivers and advertisers first and last names. Also show vehicle model for drivers and company name for advertisers as the display_name.
+
+QUERY:
+
+SELECT DISTINCT users.firstname, users.lastname, vehicle.model as display_name
+from users JOIN driver ON users.email = driver.email JOIN vehicle ON users.email = vehicle.driver_email
+UNION
+SELECT DISTINCT users.firstname, users.lastname, companyname as display_name
+from advertiser JOIN users ON advertiser.email = users.email
+
+OUTPUT:
+
+firstname	lastname	display_name	
+Todd		Sutter		Gallardo	
+Tyler		Veseth		Corvette	
+Jordan		Olson		Fiesta	
+Sarah		Wilkenin	Rx350	
+Jourdy		Persinge	720s	
+Amber		Sutter		IGroupCreative	
+David		Sutter		ScoreVision	
+Dexter		Renter		Stay Sharp	
+Matt		Ramold		Mens Warehouse	
+Molly		Sutter		Apple	
+Shannon		Persinge	Google	
+Wiley		Nichols		Qdoba	
+
+11) Select drivers names that have driven routes over 50 miles.
+
+QUERY:
+
+SELECT DISTINCT users.firstname, users.lastname
+from driver JOIN users ON driver.email = users.email JOIN campaign ON driver.email = campaign.driver_email JOIN route ON campaign.campaign_name = route.campaign_name
+where route.mileage > 50
+
+OUTPUT:
+
+firstname	lastname	
+Todd		Sutter	
+Jordan		Olson	
+Jourdy		Persinge	
+
+12) Select drivers names that have driven routes over 50 miles in a car newer than 1999.
+
+QUERY:
+
+(SELECT DISTINCT users.firstname, users.lastname
+from driver JOIN users ON driver.email = users.email JOIN campaign ON driver.email = campaign.driver_email JOIN route ON campaign.campaign_name = route.campaign_name
+where route.mileage > 50)
+INTERSECT
+(SELECT DISTINCT users.firstname, users.lastname
+from users JOIN driver ON users.email = driver.email JOIN vehicle ON driver.email = vehicle.driver_email
+where vehicle.year_made > 1999)
+
+OUTPUT:
+
+I expected this to work but wampserver does not have an INTERSECT, EXCEPT, or MINUS method. I included this query anyway to show you that I tried.
+
+13) Get all of the firstnames of the people who have the lastname "Sutter".
+
+QUERY:
+
+SELECT firstname
+from users
+where lastname in (SELECT lastname from users where lastname = 'Sutter')
+
+OUTPUT:
+
+firstname	
+Amber	
+David	
+Molly	
+Todd	
+
+14) Redo number 12 with using nested set comparision instead.
+
+QUERY:
+
+SELECT DISTINCT users.firstname, users.lastname
+from driver JOIN users ON driver.email = users.email JOIN campaign ON driver.email = campaign.driver_email JOIN route ON campaign.campaign_name = route.campaign_name
+where route.mileage > 50 and users.email IN (SELECT DISTINCT users.email
+from users JOIN driver ON users.email = driver.email JOIN vehicle ON driver.email = vehicle.driver_email
+where vehicle.year_made > 1999)
+
+OUTPUT:
+
+firstname	lastname	
+Todd		Sutter	
+Jourdy		Persinge	
+
+15) Using the with clause, select all vehicles' make and model that are older than 2010 that are not a Chevy.
+
+QUERY:
+
+WITH old_vehicles AS (SELECT make, model from vehicle where year_made < 2010)
+SELECT make, model
+from old_vehicles
+where make != 'Chevy'
+
+OUTPUT:
+
+I expected this to work but 'WITH' does not work in wampserver.
+
+16) Redo number 15 with nested queries instead.
+
+QUERY:
+
+SELECT make, model
+from vehicle
+where make != 'Chevy' and vin IN (SELECT vin from vehicle where year_made < 2010)
+
+OUTPUT:
+
+make		model	
+Ferrari		F430	
+Lamborghini	Gallardo	
+Ford		Fiesta	
+
+17) Delete campaign: 'Qdoba 2019'.
+
+QUERY:
+
+DELETE FROM campaign
+where campaign_name = 'Qdoba 2019'
+
+OUTPUT:
+
+Successfully deleted one row.
+
+18) Delete all campaigns with no route data.
+
+QUERY:
+
+DELETE FROM campaign
+where campaign_name NOT IN (SELECT DISTINCT campaign_name from route)
+
+OUTPUT:
+
+Successfully deleted one row. (Campaign with name: 'Qdoba 2018')
+
+19) Change 'Stay Sharp 1' campaign end_date to the end of 2018.
+
+QUERY:
+
+UPDATE campaign
+SET end_date = '20181231'
+where campaign_name = 'Stay Sharp 1'
+
+OUTPUT:
+
+Successfully updated one row.
+
+20) Make Todd Sutter an advertiser as well with companyname='CarSnaps'.
+
+QUERY:
+
+INSERT INTO advertiser (email, companyname) VALUES
+((SELECT email from users where firstname = 'Todd' and lastname = 'Sutter'), 'CarSnaps')
+
+OUTPUT:
+
+Successfully inserted one row.
+
+21) Make sure there is only one user with the email 'todd@gmail.com'.
+
+QUERY:
+
+SELECT *
+from users
+where email = 'todd@gmail.com'
+
+OUTPUT:
+
+email		firstname	lastname
+todd@gmail.com	Todd		Sutter	
+
+22) Display the amount of pins associated to the campaign: 'Qdoba 2016'.
+
+QUERY:
+
+SELECT COUNT(*) as pin_count
+from campaign JOIN route ON campaign.campaign_name = route.campaign_name JOIN pin ON route.route_number = pin.route_number
+where campaign.campaign_name = 'Qdoba 2016'
+
+OUTPUT:
+
+pin_count
+16	
+
+23) Display the amount of pins associated to every campaign.
+
+QUERY:
+
+SELECT campaign.campaign_name, COUNT(*) as pin_count
+from campaign JOIN route ON campaign.campaign_name = route.campaign_name JOIN pin ON route.route_number = pin.route_number
+group by campaign.campaign_name
+
+OUTPUT:
+
+campaign_name		pin_count	
+Google and Apple	4	
+Mens Warehouse Jan	8	
+Qdoba 2016		16	
+ScoreVision/IGroup	6	
+Stay Sharp 1		3	
+
+24) Display all campaigns that have ended as past_campaigns.
+
+QUERY:
+
+SELECT campaign.campaign_name as past_campaigns
+from campaign
+where campaign.end_date < CURRENT_TIMESTAMP
+
+OUTPUT:
+
+past_campaigns	
+Mens Warehouse Jan	
+Qdoba 2016	
+
+--- ORIGINAL SQL SPECIFICATION ---
+
+CREATE TABLE users(
+    email varchar(64) PRIMARY KEY NOT NUll,
+    firstname varchar(8) NOT NULL,
+    lastname varchar(8) NOT NULL
+);
+CREATE TABLE driver(
+    email varchar(64) PRIMARY KEY NOT NULL REFERENCES users(email)
+);
+CREATE TABLE advertiser(
+    email varchar(64) PRIMARY KEY NOT NULL REFERENCES users(email),
+    companyname varchar(64) NOT NULL
+);
+CREATE TABLE vehicle(
+    vin varchar(20) PRIMARY KEY NOT NULL,
+    make varchar(20) NOT NULL,
+    model varchar(20) NOT NULL,
+    year_made int NOT NULL,
+    driver_email varchar(64) NOT NULL REFERENCES driver(email)
+);
+CREATE TABLE campaign(
+    campaign_name varchar(20) PRIMARY KEY NOT NULL,
+    start_date date NOT NULL,
+    end_date date NOT NULL,
+    driver_email varchar(64) NOT NULL REFERENCES driver(email)
+);
+CREATE TABLE campaignadvertiser(
+    campaign_name varchar(20) NOT NULL REFERENCES campaign(campaign_name),
+    advertiser_email varchar(64) NOT NULL REFERENCES advertiser(email)
+);
+CREATE TABLE route(
+    route_number int PRIMARY KEY NOT NULL,
+    mileage float NOT NULL,
+    campaign_name varchar(20) NOT NULL REFERENCES campaign(campaign_name)
+);
+CREATE TABLE pin(
+    pin_time datetime PRIMARY KEY NOT NULL,
+    latitude float NOT NULL,
+    longitude float NOT NULL,
+    route_number int NOT NULL REFERENCES route(route_number)
+);
+
+--- CHANGES MADE TO SPECIFICATION ---
+
+1) I changed all ‘CREATE TABLES’ to ‘CREATE TABLES IF NOT EXISTS’ for extra safety on creating tables.
+
+2) I changed pin_time (datetime) in the table ‘pin’ to pin_number (int) because i ran into a problem with pins having the same pin_time and that was the primary key so they could not be the same. I also deciding knowing the pin_time was unnecessary.
