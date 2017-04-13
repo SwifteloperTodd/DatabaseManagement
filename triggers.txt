@@ -1,0 +1,15 @@
+drop trigger if exists delete_pins;
+delimiter //
+CREATE TRIGGER delete_pins after delete
+ON route for each row begin
+DELETE FROM pin where pin.route_number = route.route_number;
+end//
+delimiter ;
+
+drop trigger if exists add_mileage;
+delimiter //
+CREATE TRIGGER add_mileage after insert
+ON pin for each row begin
+update route set mileage = route.mileage + 1 where pin.route_number = route.route_number;
+end//
+delimiter ;
